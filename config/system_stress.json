@@ -1,0 +1,27 @@
+{
+    "system": {
+        "mode": "live",
+        "duration_s": 600,
+        "num_nodes": 50,
+        "seed_base": 2000
+    },
+    "sensor": {
+        "event_rate_hz": 5.0,
+        "status_rate_hz": 1.0
+    },
+    "network": {
+        "latency_ms": 100,
+        "jitter_ms": 50,
+        "loss_rate": 0.05,
+        "network_seed": 8484,
+        "reorder_enabled": false
+    },
+    "central": {
+        "heartbeat_timeout_s": 3.0,
+        "alerts_buffer": 1000
+    },
+    "logging": {
+        "log_dir": "run_logs",
+        "flush_every_n": 50
+    }
+}
