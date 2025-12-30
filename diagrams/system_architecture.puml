@@ -1,0 +1,18 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "Distributed Surveillance System" {
+  [Sensor Nodes (1..N)] as SN
+  [Network Emulator] as NE
+  [Central Processor] as CP
+  [Operator UI] as UI
+}
+
+actor Operator
+
+SN --> NE : PUB (tcp://127.0.0.1:7001) \n DisturbanceEvent, NodeStatus
+NE --> CP : PUB (tcp://127.0.0.1:7002) \n (Forwarded with latency/loss)
+CP --> UI : Read central_state.json \n Read alerts.jsonl
+UI --> Operator : HTTP (port 8080)
+
+@enduml

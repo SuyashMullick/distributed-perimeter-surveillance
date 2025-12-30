@@ -1,0 +1,36 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        ./vcpkg/bootstrap-vcpkg.sh
+
+    - name: Configure CMake
+      run: cmake --preset release -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
+
+    - name: Build
+      run: cmake --build --preset release
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build/release
+      run: ctest --output-on-failure -j4
+
+    - name: Upload Artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: run_logs
+        path: build/release/run_logs/

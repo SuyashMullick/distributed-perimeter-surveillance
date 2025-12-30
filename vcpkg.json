@@ -1,0 +1,13 @@
+{
+  "name": "distributed-surveillance-cpp",
+  "version": "1.0.0",
+  "dependencies": [
+    "cppzmq",
+    "nlohmann-json",
+    "spdlog",
+    "cpp-httplib",
+    "catch2",
+    "stduuid"
+  ],
+  "builtin-baseline": "2c9ba950fc1b0c0360aeb87ae8ce5c26f072c4ce"
+}

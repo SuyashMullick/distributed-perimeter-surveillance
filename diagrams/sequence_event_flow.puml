@@ -1,0 +1,20 @@
+@startuml
+participant "Sensor Node" as SN
+participant "Network Emulator" as NE
+participant "Central Processor" as CP
+participant "Operator UI" as UI
+actor Operator
+
+SN -> NE: DisturbanceEvent (JSON)
+note left: monotonic_ns = 1000\ntimestamp_utc = T1
+NE -> NE: Apply Latency (e.g. 20ms)
+NE -> CP: Forward DisturbanceEvent
+note right: Received at T2
+CP -> CP: Rule-based Classification
+CP -> CP: Wait for > 1s interval 
+CP -> CP: Log CentralAlert -> alerts.jsonl
+CP -> CP: Write central_state.json
+UI -> CP: Read logs safely
+UI -> Operator: Display in Dashboard
+
+@enduml
