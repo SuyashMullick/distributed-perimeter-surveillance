@@ -11,7 +11,7 @@ This project is a **simulation** of a perimeter surveillance subsystem inspired 
 The project’s purpose is to demonstrate **requirements engineering, interface control, verification, traceability, and disciplined C++ implementation**.
 
 ## 1. System Context
-The Distributed Fiber-Like Sensor Surveillance System (Simulated, Non-Weapon) demonstrates strict control over messaging, deterministic execution constraints, and validation.
+The Distributed Sensor Surveillance System (Simulated, Non-Weapon) demonstrates strict control over messaging, deterministic execution constraints, and validation.
 
 ## 2. Requirements
 
