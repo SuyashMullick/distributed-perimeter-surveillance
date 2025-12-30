@@ -25,8 +25,7 @@ public:
 private:
     void generate_events(double current_time_s);
     void send_status(double current_time_s);
-
-    void emit_event();
+    void emit_event(double current_time_s);
 
     std::string node_id_;
     int node_index_;

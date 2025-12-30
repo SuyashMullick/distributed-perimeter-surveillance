@@ -92,6 +92,14 @@ void CentralProcessor::handle_event(const nlohmann::json& msg) {
 
     uint64_t central_utc_ms = time::utc_now_ms();
     uint64_t event_utc_ms = parse_utc_to_ms(msg.value("timestamp_utc", ""));
+    uint64_t mono_ns = time::monotonic_ns();
+    std::string timestamp_utc = time::utc_now_string();
+
+    if (cfg_.system.mode == "deterministic") {
+        central_utc_ms = event_utc_ms + cfg_.network.latency_ms + 1; 
+        timestamp_utc = time::format_utc_ms(central_utc_ms);
+        mono_ns = msg.value("monotonic_ns", 0ULL) + (cfg_.network.latency_ms + 1) * 1000000ULL;
+    }
     double latency = std::max(0.0, static_cast<double>(central_utc_ms) - static_cast<double>(event_utc_ms));
 
     nlohmann::json alert = {
@@ -99,8 +107,8 @@ void CentralProcessor::handle_event(const nlohmann::json& msg) {
         {"alert_id", ids::generate_uuid()},
         {"event_id", msg["event_id"]},
         {"source_node_id", msg["node_id"]},
-        {"timestamp_utc", time::utc_now_string()},
-        {"monotonic_ns", time::monotonic_ns()},
+        {"timestamp_utc", timestamp_utc},
+        {"monotonic_ns", mono_ns},
         {"classification", classification},
         {"processing_latency_ms", latency}
     };
@@ -130,7 +138,7 @@ void CentralProcessor::handle_status(const nlohmann::json& msg) {
 
 void CentralProcessor::process_messages() {
     while (running_) {
-        auto msg_opt = zmq_utils::receive_json(sub_socket_, true);
+        auto msg_opt = zmq_utils::receive_json(sub_socket_, false);
         if (!msg_opt) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;

@@ -25,7 +25,7 @@ void SensorNode::stop() {
     running_ = false;
 }
 
-void SensorNode::emit_event() {
+void SensorNode::emit_event(double current_time_s) {
     // Determine type
     double p = uniform_dist_(rng_);
     std::string event_type;
@@ -56,13 +56,20 @@ void SensorNode::emit_event() {
     double signal_energy = std::max(0.0, dist_en(rng_));
     uint32_t generated_seed = rng_();
 
+    uint64_t mono_ns = time::monotonic_ns();
+    std::string utc_str = time::utc_now_string();
+    if (cfg_.system.mode == "deterministic") {
+        mono_ns = (uint64_t)(current_time_s * 1e9);
+        utc_str = time::format_utc_ms((uint64_t)(current_time_s * 1000.0) + 1700000000000ULL); // Baseline arbitrary deterministic epoch + time
+    }
+
     nlohmann::json msg = {
         {"msg_type", "DisturbanceEvent"},
         {"event_id", ids::generate_uuid()},
         {"node_id", node_id_},
         {"sequence_number", seq_num_++},
-        {"timestamp_utc", time::utc_now_string()},
-        {"monotonic_ns", time::monotonic_ns()},
+        {"timestamp_utc", utc_str},
+        {"monotonic_ns", mono_ns},
         {"signal_amplitude", signal_amplitude},
         {"signal_energy", signal_energy},
         {"event_type", event_type},
@@ -76,11 +83,17 @@ void SensorNode::emit_event() {
 }
 
 void SensorNode::send_status(double current_time_s) {
+    uint64_t mono_ns = time::monotonic_ns();
+    std::string utc_str = time::utc_now_string();
+    if (cfg_.system.mode == "deterministic") {
+        mono_ns = (uint64_t)(current_time_s * 1e9);
+        utc_str = time::format_utc_ms((uint64_t)(current_time_s * 1000.0) + 1700000000000ULL);
+    }
     nlohmann::json msg = {
         {"msg_type", "NodeStatus"},
         {"node_id", node_id_},
-        {"timestamp_utc", time::utc_now_string()},
-        {"monotonic_ns", time::monotonic_ns()},
+        {"timestamp_utc", utc_str},
+        {"monotonic_ns", mono_ns},
         {"health", "OK"},
         {"uptime_s", current_time_s},
         {"last_sequence_number", seq_num_ - 1}
@@ -90,7 +103,7 @@ void SensorNode::send_status(double current_time_s) {
 
 void SensorNode::generate_events(double current_time_s) {
     while (next_event_time_s_ <= current_time_s) {
-        emit_event();
+        emit_event(current_time_s);
         next_event_time_s_ += -std::log(uniform_dist_(rng_)) / cfg_.sensor.event_rate_hz;
     }
 

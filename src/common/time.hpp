@@ -15,5 +15,7 @@ std::string utc_now_string();
 // UTC milliseconds since unix epoch, needed for central latency processing
 uint64_t utc_now_ms();
 
+std::string format_utc_ms(uint64_t ms);
+
 } // namespace time
 } // namespace surveillance

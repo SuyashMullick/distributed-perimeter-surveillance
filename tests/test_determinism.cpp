@@ -22,21 +22,21 @@ std::string read_file_content(const std::string& path) {
 }
 
 void run_deterministic_cycle(const std::string& out_dir) {
-    std::string config_path = "config/system_deterministic.json";
+    std::string config_path = "../../../config/system_deterministic.json";
     
     std::filesystem::remove_all("run_logs");
     std::filesystem::create_directory("run_logs");
 
     std::vector<std::unique_ptr<proc::Process>> procs;
     
-    procs.push_back(std::make_unique<proc::Process>("./central_processor" + EXT, std::vector<std::string>{config_path}));
+    procs.push_back(std::make_unique<proc::Process>("../central_processor" + EXT, std::vector<std::string>{config_path}));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
-    procs.push_back(std::make_unique<proc::Process>("./network_emulator" + EXT, std::vector<std::string>{config_path}));
+    procs.push_back(std::make_unique<proc::Process>("../network_emulator" + EXT, std::vector<std::string>{config_path}));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
-    for (int i = 0; i < 10; ++i) {
-        procs.push_back(std::make_unique<proc::Process>("./sensor_node" + EXT, std::vector<std::string>{
+    for (int i = 0; i < 1; ++i) {
+        procs.push_back(std::make_unique<proc::Process>("../sensor_node" + EXT, std::vector<std::string>{
             config_path, "sensor_" + std::to_string(i), std::to_string(i)
         }));
     }

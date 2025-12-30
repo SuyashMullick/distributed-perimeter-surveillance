@@ -18,7 +18,7 @@ TEST_CASE("TC-LAT-001: Latency Requirement (SR-001)", "[latency]") {
     // Generate a temporary config for a 10s run to avoid 10 min CTest hangs in general CI,
     // though the requirement says 10 minutes. We assume a 15s test proves the p95.
     // In actual rigorous run, we'd use 600.
-    std::string config_path = "config/system_nominal.json";
+    std::string config_path = "../../../config/system_nominal.json";
     
     // Clean old logs
     std::filesystem::remove_all("run_logs");
@@ -27,16 +27,16 @@ TEST_CASE("TC-LAT-001: Latency Requirement (SR-001)", "[latency]") {
     std::vector<std::unique_ptr<proc::Process>> procs;
     
     // Start central
-    procs.push_back(std::make_unique<proc::Process>("./central_processor" + EXT, std::vector<std::string>{config_path}));
+    procs.push_back(std::make_unique<proc::Process>("../central_processor" + EXT, std::vector<std::string>{config_path}));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     // Start network emulator
-    procs.push_back(std::make_unique<proc::Process>("./network_emulator" + EXT, std::vector<std::string>{config_path}));
+    procs.push_back(std::make_unique<proc::Process>("../network_emulator" + EXT, std::vector<std::string>{config_path}));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
     // Start sensors
     for (int i = 0; i < 10; ++i) {
-        procs.push_back(std::make_unique<proc::Process>("./sensor_node" + EXT, std::vector<std::string>{
+        procs.push_back(std::make_unique<proc::Process>("../sensor_node" + EXT, std::vector<std::string>{
             config_path, "sensor_" + std::to_string(i), std::to_string(i)
         }));
     }

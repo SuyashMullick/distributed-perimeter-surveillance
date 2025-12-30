@@ -3,6 +3,7 @@
 #include <atomic>
 #include <unordered_map>
 #include <shared_mutex>
+#include <mutex>
 
 namespace surveillance {
 namespace metrics {

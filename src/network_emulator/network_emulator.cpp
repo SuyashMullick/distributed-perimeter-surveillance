@@ -47,7 +47,7 @@ void NetworkEmulator::run() {
 
 void NetworkEmulator::process_incoming() {
     while (running_) {
-        auto msg_opt = zmq_utils::receive_json(sub_socket_, true);
+        auto msg_opt = zmq_utils::receive_json(sub_socket_, false);
         if (!msg_opt) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;
@@ -92,11 +92,7 @@ void NetworkEmulator::process_outgoing() {
      while (running_) {
         std::vector<nlohmann::json> to_send;
         uint64_t current_time = time::monotonic_ns();
-        
-        // In deterministic mode we flush immediately anything that has a delivery time <= max queue item + simulated advancing time.
-        // Actually, the spec clarifies that deterministic components run fast. "Network emulator processes messages in deterministic order and applies deterministic impairment without real sleeps: It computes delivery time in simulated time and queues accordingly."
-        // We will pop items as soon as deterministic time allows. For simplicity, we can let central handle ordering or we sort here and flush.
-        
+
         {
             std::lock_guard<std::mutex> lock(queue_mutex_);
             while (!queue_.empty()) {
@@ -108,7 +104,7 @@ void NetworkEmulator::process_outgoing() {
                 }
             }
         }
-
+        
         for (const auto& payload : to_send) {
             zmq_utils::publish_json(pub_socket_, payload);
             metrics::increment("emulator.forwarded_messages");

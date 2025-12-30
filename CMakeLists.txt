@@ -33,7 +33,7 @@ target_link_libraries(common PUBLIC
     nlohmann_json::nlohmann_json
     spdlog::spdlog
     cppzmq
-    stduuid::stduuid
+    stduuid
     common_options
 )
 

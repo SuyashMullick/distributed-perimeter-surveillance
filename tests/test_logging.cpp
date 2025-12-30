@@ -13,17 +13,17 @@ using namespace surveillance;
 #endif
 
 TEST_CASE("TC-LOG-001: Logging Completeness Requirement (SR-003)", "[logging]") {
-    std::string config_path = "config/system_nominal.json";
+    std::string config_path = "../../../config/system_nominal.json";
     
     std::filesystem::remove_all("run_logs");
     std::filesystem::create_directory("run_logs");
 
     std::vector<std::unique_ptr<proc::Process>> procs;
     
-    procs.push_back(std::make_unique<proc::Process>("./central_processor" + EXT, std::vector<std::string>{config_path}));
+    procs.push_back(std::make_unique<proc::Process>("../central_processor" + EXT, std::vector<std::string>{config_path}));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
-    procs.push_back(std::make_unique<proc::Process>("./sensor_node" + EXT, std::vector<std::string>{
+    procs.push_back(std::make_unique<proc::Process>("../sensor_node" + EXT, std::vector<std::string>{
         config_path, "sensor_0", "0"
     }));
 

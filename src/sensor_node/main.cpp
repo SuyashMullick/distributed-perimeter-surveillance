@@ -1,5 +1,6 @@
 #include "sensor_node.hpp"
 #include "logging.hpp"
+#include "ids.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -30,6 +31,10 @@ int main(int argc, char** argv) {
     }
 
     auto cfg = config::load(config_path);
+    if (cfg.system.mode == "deterministic") {
+        ids::seed(cfg.system.seed_base + node_index);
+    }
+    
     logging::init(node_id, cfg.logging.log_dir, cfg.logging.flush_every_n);
     logging::info("Starting sensor node", {{"node_id", node_id}, {"index", node_index}});
 

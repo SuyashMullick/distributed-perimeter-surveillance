@@ -1,5 +1,6 @@
 #include "central_processor.hpp"
 #include "logging.hpp"
+#include "ids.hpp"
 #include <iostream>
 #include <csignal>
 #include <thread>
@@ -22,6 +23,10 @@ int main(int argc, char** argv) {
     }
 
     auto cfg = config::load(config_path);
+    if (cfg.system.mode == "deterministic") {
+        ids::seed(cfg.system.seed_base + 100);
+    }
+    
     logging::init("central", cfg.logging.log_dir, cfg.logging.flush_every_n);
     logging::info("Starting central processor");
 

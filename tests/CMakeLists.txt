@@ -11,6 +11,8 @@ endif()
 target_include_directories(test_support PUBLIC support)
 target_link_libraries(test_support PUBLIC common Catch2::Catch2WithMain nlohmann_json::nlohmann_json)
 
+include(Catch)
+
 # Latency Test
 add_executable(test_latency test_latency.cpp)
 target_link_libraries(test_latency PRIVATE test_support)
