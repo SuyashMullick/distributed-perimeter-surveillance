@@ -8,7 +8,7 @@
 
 This project is a **simulation** of a perimeter surveillance subsystem inspired by distributed sensing concepts. It does **not** claim operational performance.
 
-**Out of scope (explicit):**
+**Out of scope:**
 
 - Weapon integration, targeting, or fire control
 - Classified sensing methods or performance
