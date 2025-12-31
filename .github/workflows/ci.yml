@@ -9,28 +9,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
+
+    - name: Install build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build gcc g++ pkg-config curl zip unzip tar
 
     - name: Setup vcpkg
       run: |
         git clone https://github.com/microsoft/vcpkg.git
-        ./vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
 
     - name: Configure CMake
-      run: cmake --preset release -DCMAKE_TOOLCHAIN_FILE=../vcpkg/scripts/buildsystems/vcpkg.cmake
+      run: cmake --preset release -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/vcpkg/scripts/buildsystems/vcpkg.cmake
 
     - name: Build
       run: cmake --build --preset release
 
     - name: Test
-      working-directory: ${{github.workspace}}/build/release
-      run: ctest --output-on-failure -j4
+      working-directory: ${{github.workspace}}/build/release/tests
+      run: ctest --output-on-failure
 
     - name: Upload Artifacts
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: run_logs
-        path: build/release/run_logs/
+        path: build/release/tests/run_logs/
