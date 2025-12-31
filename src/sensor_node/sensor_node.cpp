@@ -128,6 +128,11 @@ void SensorNode::run_live() {
 }
 
 void SensorNode::run_deterministic() {
+    // Allow ZMQ subscriptions to establish before flooding messages.
+    // Without this delay, the PUB socket sends all ticks before the network
+    // emulator's SUB socket completes its TCP handshake (ZMQ "slow joiner").
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
     double tick_s = 0.01; // 100 Hz
     int ticks = cfg_.system.duration_s / tick_s;
     
